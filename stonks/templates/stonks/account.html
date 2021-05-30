@@ -1,0 +1,61 @@
+{% extends "stonks/header.html" %}
+{% block content %}
+<div style="float:right;">
+  <canvas id="myChart" style="height: 175px"></canvas>
+</div>
+<h1>{{stockholder.username}}</h1>
+<h3>Account Value: {{totalvalue}}</h3>
+<h5><i>Portfolio Value: {{assetvalue}}</i></h5>
+<h5><i>Buying Power: {{buyingpower}}</i></h5>
+<br>
+<hr>
+{% for stock, amount in stockdata.items %}
+  {% if amount > 0 %}
+    <div class="card">
+      <h5 class="card-header">{{stock}}</h5>
+      <div class="card-body">
+        {% if amount > 1 %}
+          <h5 class="card-title">{{amount}} shares owned</h5>
+        {% else %}
+          <h5 class="card-title">{{amount}} share owned</h5>
+        {% endif %}
+        <a href="/stock/{{stock}}/1d" class="btn btn-primary">{{stock}}</a>
+        <br>
+        <i>Go to {{stock}} page</i>
+      </div>
+    </div>
+    <br>
+  {% endif %}
+{% endfor %}
+<script>
+  const data = {
+    labels: [
+      'Portfolio Value',
+      'Buying Power',
+    ],
+    datasets: [{
+      label: 'Account Value',
+      data: [{{assetvalue}}, {{buyingpower}}],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+      ],
+      hoverOffset: 4
+    }]
+  };
+    const config = {
+      type: 'doughnut',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+
+    };
+
+    var myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+</script>
+{% endblock %}

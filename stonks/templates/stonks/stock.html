@@ -1,0 +1,130 @@
+{% extends "stonks/header.html" %}
+{% block content %}
+<body>
+  <div>
+    <h2>{{stockname}}</h2>
+    <h1>{{stockpricenow}}</h1>
+    <div style="float:right; margin-top:-7%;" class="btn btn-outline-primary">
+      {% if amountowned == 1 %}
+        <h4>{{amountowned}} Share Owned</h4>
+      {% else %}
+        <h4>{{amountowned}} Shares Owned</h4>
+      {% endif %}
+      <a href="/buy/{{stockname}}" type="button" class="btn btn-outline-success" style="padding: 10px 10px 10px;">buy</a>
+      <br>
+      <a href="/sell/{{stockname}}" type="button" class="btn btn-outline-danger" style="padding: 10px 12px 10px;">sell</a>
+    </div>
+    <h3 style="{% if profit %}
+                  color: rgb(218, 28, 56);
+                {% else %}
+                  color: rgb(122, 192, 67);
+                {% endif %}
+                ">{{change}} ({{percentchange}})</h3>
+    {% if length == '1d' %}
+      <select onchange="location = this.value;" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option selected>One Day</option>
+        <option value="1w">Five Day</option>
+        <option value="1m">One Month</option>
+        <option value="3m">Three Months</option>
+        <option value="1y">One Year</option>
+      </select>
+    {% elif length == '1w' %}
+      <select onchange="location = this.value;" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="1d">One Day</option>
+        <option selected>Five Day</option>
+        <option value="1m">One Month</option>
+        <option value="3m">Three Months</option>
+        <option value="1y">One Year</option>
+      </select>
+    {% elif length == '1m' %}
+      <select onchange="location = this.value;" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="1d">One Day</option>
+        <option value="1w">Five Day</option>
+        <option selected>One Month</option>
+        <option value="3m">Three Months</option>
+        <option value="1y">One Year</option>
+      </select>
+    {% elif length == '3m' %}
+      <select onchange="location = this.value;" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="1d">One Day</option>
+        <option value="1w">Five Day</option>
+        <option value="1m">One Month</option>
+        <option selected>Three Months</option>
+        <option value="1y">One Year</option>
+      </select>
+    {% elif length == '1y' %}
+      <select onchange="location = this.value;" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="1d">One Day</option>
+        <option value="1w">Five Day</option>
+        <option value="1m">One Month</option>
+        <option value="3m">Three Months</option>
+        <option selected>One Year</option>
+      </select>
+    {% endif %}
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
+  <script>
+
+    // setup
+    const labels = {{stockdates | safe}};
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: '{{stockname}}',
+        {% if profit %}
+          backgroundColor: 'rgb(218, 28, 56)',
+          borderColor: 'rgb(218, 28, 56)',
+        {% else %}
+          backgroundColor: 'rgb(122, 192, 67)',
+          borderColor: 'rgb(122, 192, 67)',
+        {% endif %}
+        data: {{stockprice | safe}} ,
+      }]
+    };
+
+    // config
+    const config = {
+            type: 'line',
+            data,
+            options: {
+                elements: {
+                    point:{
+                        radius: 0
+                    }, line: {
+                      tension: .5
+                    }
+                }, scales: {
+                  y: {
+                    grid: {
+                      display: true
+                    }
+                  },
+                  x: {
+                    grid: {
+                      display: false
+                    }
+                  }
+                }
+            }
+        }
+
+    // render
+    var myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+  </script>
+  <style>
+    .btn-outline-primary:hover{
+      background-color:transparent;
+      color:#007bff;
+    }
+    .btn-outline-primary:active{
+      background-color:transparent;
+      color:#007bff;
+    }
+  </style>
+</body>
+{% endblock %}
